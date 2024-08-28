@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tolyan\Openai\ChatCompletion\ToolChoice;
 
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Tolyan\Openai\ChatCompletion\CompletionRequest\ToolChoice;
 use Tolyan\Openai\ChatCompletion\CompletionRequest\ToolInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class ToolChoiceNormalizer implements NormalizerInterface
 {

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tolyan\Openai\ChatCompletion\Tool;
 
-use Tolyan\Openai\ChatCompletion\CompletionRequest\ToolInterface;
 use Spiral\JsonSchemaGenerator\Generator;
 use Spiral\JsonSchemaGenerator\GeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Tolyan\Openai\ChatCompletion\CompletionRequest\ToolInterface;
 
 final readonly class ToolNormalizer implements NormalizerInterface
 {

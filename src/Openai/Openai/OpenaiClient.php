@@ -51,7 +51,6 @@ final readonly class OpenaiClient implements OpenaiClientInterface
             );
 
         $response = $this->httpClient->sendRequest($request);
-
         dump($response);
 
         if ($response->getStatusCode() !== 200) {

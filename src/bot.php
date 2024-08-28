@@ -2,8 +2,10 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Tolyan\Bot\Browser;
-use Tolyan\Bot\MultipartFormData;
+use function React\Async\await;
+
+use Shanginn\TelegramBotApiBindings\Types\Update;
+use Shanginn\TelegramBotApiFramework\TelegramBot;
 use Tolyan\Character\InteractionSchema;
 use Tolyan\Character\InteractionTool;
 use Tolyan\EchoLogger;
@@ -17,17 +19,11 @@ use Tolyan\Openai\ChatCompletion\Message\AssistantMessage;
 use Tolyan\Openai\ChatCompletion\Message\User\ImageContentPart;
 use Tolyan\Openai\ChatCompletion\Message\User\ImageDetailLevelEnum;
 use Tolyan\Openai\ChatCompletion\Message\User\TextContentPart;
+
 use Tolyan\Openai\ChatCompletion\Message\UserMessage;
+
 use Tolyan\Openai\Openai;
 use Tolyan\Openai\Openai\OpenaiClient;
-
-use function React\Async\async;
-use function React\Async\await;
-
-use React\Promise\PromiseInterface;
-use React\Promise\Timer;
-use Shanginn\TelegramBotApiBindings\Types\Update;
-use Shanginn\TelegramBotApiFramework\TelegramBot;
 
 Dotenv\Dotenv::createImmutable(__DIR__)->load();
 
@@ -47,7 +43,7 @@ $novita = new Novita(
 $bot = new TelegramBot($botToken, logger: new EchoLogger());
 
 [
-    'tolyan'                     => $tolyan,
+    'tolyan'                    => $tolyan,
     'systemPrompt'              => $systemPrompt,
     'finalSystemPromptTemplate' => $finalSystemPromptTemplate,
 ] = require __DIR__ . '/../config/config.php';
@@ -56,7 +52,7 @@ $oai = new Openai(
     new OpenaiClient($openaiKey),
 );
 
-$imageGenerator = new class ($novita) {
+$imageGenerator = new class($novita) {
     private Novita $novita;
 
     public function __construct(Novita $novita)
@@ -64,23 +60,15 @@ $imageGenerator = new class ($novita) {
         $this->novita = $novita;
     }
 
-    public function generateImage(string $prompt): PromiseInterface
+    public function generateImage(string $prompt): string
     {
-//        return $this->novita->flux(
-//            prompt: $prompt,
-//            width: 512,
-//            height: 512,
-//        )->images[0]->imageUrl;
+        dump($prompt);
 
-        return async(function () use ($prompt) {
-            $response = $this->novita->flux(
-                prompt: $prompt,
-                width: 512,
-                height: 512,
-            );
-
-            return $response->images[0]->imageUrl;
-        })();
+        return $this->novita->flux(
+            prompt: $prompt,
+            width: 512,
+            height: 512,
+        )->images[0]->imageUrl;
     }
 };
 
@@ -91,6 +79,7 @@ $echoHandler = function (Update $update, TelegramBot $bot) use (
     $oai,
     $imageGenerator,
     $systemPrompt,
+    $tolyan,
 ) {
     $chatId = $update->message->chat->id;
     await($bot->api->sendChatAction(
@@ -150,7 +139,12 @@ $echoHandler = function (Update $update, TelegramBot $bot) use (
             action: 'typing',
         ));
 
-        $image = await($imageGenerator->generateImage($choice->arguments->sceneDescription));
+        $image = $imageGenerator->generateImage(
+            <<<PROMPT
+                Scene description: {$choice->arguments->sceneDescriptionEnglish}.
+                Tolyan is {$tolyan->characterDescription}, {$tolyan->looksDescription}
+                PROMPT
+        );
 
         await($bot->api->sendPhoto(
             chatId: $chatId,
@@ -159,15 +153,26 @@ $echoHandler = function (Update $update, TelegramBot $bot) use (
 
         await($bot->api->sendMessage(
             chatId: $chatId,
-            text: $choice->arguments->speechAndActions,
+            text: $choice->arguments->speechAndActions
         ));
 
-        $assistantMessage = new AssistantMessage(
-            content: $choice->arguments->speechAndActions,
-            toolCalls: [$choice],
-        );
+        // debug:
+        await($bot->api->sendMessage(
+            chatId: $chatId,
+            text: <<<TEXT
+                Internal monologue: {$choice->arguments->internalMonologue}
+                
+                Scene description: {$choice->arguments->sceneDescriptionEnglish}
+                TEXT,
+        ));
 
-        $messages->add($chatId, $assistantMessage);
+        $messages->add($chatId, new AssistantMessage(
+            content: <<<TEXT
+                Speech and actions: {$choice->arguments->speechAndActions}
+                Internal monologue (hidden from the player): {$choice->arguments->internalMonologue}
+                Scene description: {$choice->arguments->sceneDescriptionEnglish}
+                TEXT,
+        ));
 
         return;
     }
@@ -185,15 +190,14 @@ $bot->addHandler($echoHandler)
     ->supports(fn (Update $update) => isset($update->message->text));
 
 $pressedCtrlC     = false;
-$gracefulShutdown = function (int $signal) use ($bot, &$pressedCtrlC): void {
+$gracefulShutdown = function (int $signal) use (&$pressedCtrlC): void {
     if ($pressedCtrlC) {
         echo "Shutting down now...\n";
         exit(0);
     }
 
-//    $keysCombination = $signal === SIGINT ? 'Ctrl+C' : 'Ctrl+Break';
     $keysCombination = match ($signal) {
-        SIGINT => 'Ctrl+C',
+        SIGINT  => 'Ctrl+C',
         SIGTERM => 'Ctrl+Break',
         default => 'unknown',
     };
@@ -207,8 +211,5 @@ $gracefulShutdown = function (int $signal) use ($bot, &$pressedCtrlC): void {
 
 pcntl_signal(SIGTERM, $gracefulShutdown);
 pcntl_signal(SIGINT, $gracefulShutdown);
-pcntl_signal(SIGPIPE, fn ($signal) =>
-    dump($signal)
-);
 
 $bot->run();

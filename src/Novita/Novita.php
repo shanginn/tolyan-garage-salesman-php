@@ -17,7 +17,7 @@ final readonly class Novita
     public function __construct(
         public NovitaClientInterface $client,
     ) {
-        $this->serializer   = new NovitaSerializer();
+        $this->serializer = new NovitaSerializer();
     }
 
     public function flux(
@@ -42,8 +42,6 @@ final readonly class Novita
 
         dump($responseJson);
 
-        $response = $this->serializer->deserialize($responseJson, FluxResponse::class);
-
-        return $response;
+        return $this->serializer->deserialize($responseJson, FluxResponse::class);
     }
 }

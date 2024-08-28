@@ -5,10 +5,6 @@ declare(strict_types=1);
 namespace Tolyan\Openai\Openai;
 
 use Crell\Serde\SerdeCommon;
-use Tolyan\Openai\ChatCompletion\Message\Assistant\UnknownFunctionCallImporter;
-use Tolyan\Openai\ChatCompletion\Message\User\ImageContentPartNormalizer;
-use Tolyan\Openai\ChatCompletion\Tool\ToolNormalizer;
-use Tolyan\Openai\ChatCompletion\ToolChoice\ToolChoiceNormalizer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
@@ -16,6 +12,12 @@ use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Tolyan\Openai\ChatCompletion\Message\Assistant\KnownFunctionCallNormalizer;
+use Tolyan\Openai\ChatCompletion\Message\Assistant\UnknownFunctionCallImporter;
+use Tolyan\Openai\ChatCompletion\Message\Assistant\UnknownFunctionCallNormalizer;
+use Tolyan\Openai\ChatCompletion\Message\User\ImageContentPartNormalizer;
+use Tolyan\Openai\ChatCompletion\Tool\ToolNormalizer;
+use Tolyan\Openai\ChatCompletion\ToolChoice\ToolChoiceNormalizer;
 
 class OpenaiSerializer implements OpenaiSerializerInterface
 {
@@ -30,6 +32,8 @@ class OpenaiSerializer implements OpenaiSerializerInterface
             new ToolNormalizer(),
             new ToolChoiceNormalizer(),
             new ImageContentPartNormalizer(),
+            new KnownFunctionCallNormalizer(),
+            new UnknownFunctionCallNormalizer(),
             new ObjectNormalizer(
                 nameConverter: new CamelCaseToSnakeCaseNameConverter()
             ),

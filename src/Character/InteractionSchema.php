@@ -109,20 +109,19 @@ class InteractionSchema implements ToolSchemaInterface
         )]
         #[\Crell\Serde\Attributes\Field(requireValue: true)]
         public string $speechAndActions,
-
         #[Field(
-            title: 'Scene Description',
+            title: 'Scene Description in English',
             description: <<<'EOT'
-                THIS PART SHOULD BE IN ENGLISH.
+                USE ONLY ENGLISH
                 Imagine this interaction is being played out in a movie.
-                Describe the scene like a great director to a storyboard artist.
-                You have a vision and need to communicate it to the artist.
-                DO IT IN ENGLISH.
-                Every little detail is matters, but be concise.
+                Describe the scene in english language like a great director to a storyboard artist.
+                You have a vision and need to communicate it to the artist in English.
+                Include characters (by name), setting, actions, expressions, and emotions.
+                Every little detail is matters, but be concise. Write it in english.
                 EOT
         )]
         #[\Crell\Serde\Attributes\Field(requireValue: true)]
-        public string $sceneDescription,
+        public string $sceneDescriptionEnglish,
     ) {}
 
     public static function getTool(): string

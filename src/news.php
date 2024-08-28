@@ -9,10 +9,10 @@ use Cycle\ORM\ORMInterface;
 
 use function React\Async\await;
 
-use Tolyan\EchoLogger;
-use Tolyan\Entity;
-
 use Shanginn\TelegramBotApiFramework\TelegramBot;
+use Tolyan\EchoLogger;
+
+use Tolyan\Entity;
 
 $message = <<<'TXT'
     Дорогие друзья! Я благодарю вас за участие в этой увлекательной игре!

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tolyan\Openai;
 
+use Throwable;
 use Tolyan\Openai\ChatCompletion\CompletionRequest;
 use Tolyan\Openai\ChatCompletion\CompletionRequest\ToolChoice;
 use Tolyan\Openai\ChatCompletion\CompletionRequest\ToolInterface;
@@ -16,7 +17,6 @@ use Tolyan\Openai\ChatCompletion\Message\SystemMessage;
 use Tolyan\Openai\Openai\OpenaiClientInterface;
 use Tolyan\Openai\Openai\OpenaiSerializer;
 use Tolyan\Openai\Openai\OpenaiSerializerInterface;
-use Throwable;
 
 final readonly class Openai
 {

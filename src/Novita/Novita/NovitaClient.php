@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tolyan\Novita\Novita;
 
+use Http\Adapter\React\Client;
 use Http\Client\Exception\HttpException;
 use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Discovery\Psr18ClientDiscovery;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -22,7 +22,7 @@ final readonly class NovitaClient implements NovitaClientInterface
         private string $apiKey,
         private string $apiUrl = 'https://api.novita.ai',
     ) {
-        $this->httpClient     = Psr18ClientDiscovery::find();
+        $this->httpClient     = new Client();
         $this->requestFactory = Psr17FactoryDiscovery::findRequestFactory();
         $this->streamFactory  = Psr17FactoryDiscovery::findStreamFactory();
     }
@@ -50,7 +50,7 @@ final readonly class NovitaClient implements NovitaClientInterface
 
         $response = $this->httpClient->sendRequest($request);
 
-//        dump($response);
+        //        dump($response);
 
         if ($response->getStatusCode() !== 200) {
             throw new HttpException(

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tolyan\Novita\Flux;
 
-use Crell\Serde\Renaming\Cases;
 use Crell\Serde\Attributes as Serde;
+use Crell\Serde\Renaming\Cases;
+use InvalidArgumentException;
 
 #[Serde\ClassSettings(
     renameWith: Cases::snake_case,
@@ -22,28 +23,30 @@ final readonly class FluxRequest
      * Constructor to initialize properties with promoted parameters.
      *
      *                                    Enum: png, webp, jpeg
-     * @param string $prompt              Text input required to guide the image generation, divided by `,`.
-     *                                    making generation deterministic.
-     * @param int    $steps               The number of denoising steps. More steps usually produce higher quality images,
-     *                                    but take more time to generate.
-     * @param int    $width               Width of the image.
-     * @param int    $height              Height of the image.
-     * @param int    $imageNum           Number of images generated in one single generation.
-     * @param string $responseImageType The returned image type. Default is png.
+     *
+     * @param string     $prompt            Text input required to guide the image generation, divided by `,`.
+     *                                      making generation deterministic.
+     * @param int        $steps             The number of denoising steps. More steps usually produce higher quality images,
+     *                                      but take more time to generate.
+     * @param int        $width             width of the image
+     * @param int        $height            height of the image
+     * @param int        $imageNum          number of images generated in one single generation
+     * @param string     $responseImageType The returned image type. Default is png.
+     * @param mixed|null $seed
      */
     public function __construct(
         public string $prompt,
-        public int    $steps,
+        public int $steps,
         $seed = null,
-        public int    $width = 1024,
-        public int    $height = 1024,
-        public int    $imageNum = 1,
+        public int $width = 1024,
+        public int $height = 1024,
+        public int $imageNum = 1,
         public string $responseImageType = 'png',
     ) {
         $this->seed = $seed ?? random_int(1, 4294967295);
 
         if (!in_array($this->responseImageType, ['png', 'webp', 'jpeg'])) {
-            throw new \InvalidArgumentException('Invalid value for $responseImageType');
+            throw new InvalidArgumentException('Invalid value for $responseImageType');
         }
     }
 }

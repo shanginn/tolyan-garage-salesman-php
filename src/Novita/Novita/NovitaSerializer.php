@@ -5,17 +5,13 @@ declare(strict_types=1);
 namespace Tolyan\Novita\Novita;
 
 use Crell\Serde\SerdeCommon;
-use Tolyan\Openai\ChatCompletion\Message\Assistant\UnknownFunctionCallImporter;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
+use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Tolyan\Openai\ChatCompletion\Message\User\ImageContentPartNormalizer;
 use Tolyan\Openai\ChatCompletion\Tool\ToolNormalizer;
 use Tolyan\Openai\ChatCompletion\ToolChoice\ToolChoiceNormalizer;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
-use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
-use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class NovitaSerializer implements NovitaSerializerInterface
 {
@@ -24,16 +20,16 @@ class NovitaSerializer implements NovitaSerializerInterface
 
     public function __construct()
     {
-//        $encoders    = [new JsonEncoder()];
-//        $normalizers = [
-//            new BackedEnumNormalizer(),
-//            new ToolNormalizer(),
-//            new ToolChoiceNormalizer(),
-//            new ImageContentPartNormalizer(),
-//            new ObjectNormalizer(
-//                nameConverter: new CamelCaseToSnakeCaseNameConverter()
-//            ),
-//        ];
+        //        $encoders    = [new JsonEncoder()];
+        //        $normalizers = [
+        //            new BackedEnumNormalizer(),
+        //            new ToolNormalizer(),
+        //            new ToolChoiceNormalizer(),
+        //            new ImageContentPartNormalizer(),
+        //            new ObjectNormalizer(
+        //                nameConverter: new CamelCaseToSnakeCaseNameConverter()
+        //            ),
+        //        ];
 
         $this->serializer = new SerdeCommon();
 
