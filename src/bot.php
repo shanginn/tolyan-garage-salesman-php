@@ -79,7 +79,6 @@ $echoHandler = function (Update $update, TelegramBot $bot) use (
     $oai,
     $imageGenerator,
     $systemPrompt,
-    $tolyan,
 ) {
     $chatId = $update->message->chat->id;
     await($bot->api->sendChatAction(
@@ -141,8 +140,8 @@ $echoHandler = function (Update $update, TelegramBot $bot) use (
 
         $image = $imageGenerator->generateImage(
             <<<PROMPT
-                Scene description: {$choice->arguments->sceneDescriptionEnglish}.
-                Tolyan is {$tolyan->characterDescription}, {$tolyan->looksDescription}
+                Tolyan is a middle-aged Slavic man with a jovial expressions, looks lite Gerard Depardieu with mustache.
+                {$choice->arguments->sceneDescriptionEnglish}.
                 PROMPT
         );
 

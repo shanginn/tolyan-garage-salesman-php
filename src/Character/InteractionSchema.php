@@ -116,8 +116,12 @@ class InteractionSchema implements ToolSchemaInterface
                 Imagine this interaction is being played out in a movie.
                 Describe the scene in english language like a great director to a storyboard artist.
                 You have a vision and need to communicate it to the artist in English.
-                Include characters (by name), setting, actions, expressions, and emotions.
-                Every little detail is matters, but be concise. Write it in english.
+                Include every character, setting, actions, expressions, emotions, clothing, etc.
+                Every little detail is matters, consider the full history of interactions and
+                include it into the scene. Be detailed. Write it in english.
+                
+                Each character should be described in detail, including their appearance, face, clothing,
+                Be consistent with the history
                 EOT
         )]
         #[\Crell\Serde\Attributes\Field(requireValue: true)]
